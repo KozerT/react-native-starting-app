@@ -1,15 +1,25 @@
-import { Image, StyleSheet } from 'react-native';
+import { Image, Pressable, StyleSheet } from 'react-native';
 import { Text, View } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
-import products from '@/assets/fonts/data/products';
+import { Product } from '../app/types';
+import { Link } from 'expo-router';
 
-const ProductListItem = ({product}) => {
+
+type ProductListItemProps = {
+    product: Product;
+    
+}
+
+const ProductListItem: React.FC<ProductListItemProps> = ({product}) => {
+    const defaultImage= 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/extravaganzza.png'
   return (
-    <View style={styles.container}>
-    <Image source={{uri: product.image}}style={styles.image}/>
+    <Link href={`/${product.id}`} asChild>
+    <Pressable style={styles.container}>
+    <Image source={{uri: product.image || defaultImage}}style={styles.image} resizeMode='contain'/>
     <Text style={styles.title}>{product.name}</Text>
     <Text >${product.price}</Text>
-  </View>
+  </Pressable>
+  </Link>
   )
 }
 
@@ -23,6 +33,8 @@ const styles = StyleSheet.create({
       backgroundColor: 'white',
       padding: 10,
       borderRadius: 18.5,
+      flex: 1,
+      maxWidth: '50%'
     },
     title: {
       fontSize: 18,
