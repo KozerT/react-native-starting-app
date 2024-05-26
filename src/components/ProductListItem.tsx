@@ -13,7 +13,7 @@ type ProductListItemProps = {
 const ProductListItem: React.FC<ProductListItemProps> = ({product}) => {
     const defaultImage= 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/extravaganzza.png'
   return (
-    <Link href={`/${product.id}`} asChild>
+    <Link href={`/menu/${product.id}`} asChild>
     <Pressable style={styles.container}>
     <Image source={{uri: product.image || defaultImage}}style={styles.image} resizeMode='contain'/>
     <Text style={styles.title}>{product.name}</Text>
