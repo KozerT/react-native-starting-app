@@ -4,6 +4,8 @@ import Colors from '@/src/constants/Colors';
 import { Product } from '../app/types';
 import { Link } from 'expo-router';
 
+export const defaultImage= 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/extravaganzza.png';
+
 
 type ProductListItemProps = {
     product: Product;
@@ -11,7 +13,7 @@ type ProductListItemProps = {
 }
 
 const ProductListItem: React.FC<ProductListItemProps> = ({product}) => {
-    const defaultImage= 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/extravaganzza.png'
+
   return (
     <Link href={`/menu/${product.id}`} asChild>
     <Pressable style={styles.container}>
