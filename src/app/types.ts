@@ -1,3 +1,6 @@
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+
 export type Product = {
   id: number;
   image: string | null;
@@ -47,3 +50,9 @@ export type Profile = {
   id: string;
   group: string;
 };
+
+
+//
+
+
+
