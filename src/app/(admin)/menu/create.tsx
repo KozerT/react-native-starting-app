@@ -6,6 +6,7 @@ import { Product } from '../../types'
 import { defaultImage } from '@/src/components/ProductListItem'
 import * as ImagePicker from 'expo-image-picker';
 import Colors from '@/src/constants/Colors'
+import { Stack, useLocalSearchParams } from 'expo-router'
 
 
 type CreateProductScreenProps = {
@@ -18,7 +19,10 @@ const CreateProductScreen:React.FC<CreateProductScreenProps>  = ({ products}) =>
   const [name, setName] = useState('');
   const [price, setPrice]= useState('');
   const [errors, setErrors] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);;
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const {id} = useLocalSearchParams();
+  const isUpdating =!!id;
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -61,13 +65,32 @@ const validateInput = () => {
 
    return true;
 }
+ 
+const onSubmit = () => {
+  if(isUpdating){
+    OnUpdate();
+  } else {
+    OnCreate();
+  }
+
+}
+
+const OnUpdate = () => {
+  if(!validateInput()){
+    return false;
+  }
+  console.warn("Update the product");
+  resetFields();
+
+}
+
 
 
   const OnCreate = () => {
     if(!validateInput()){
       return false;
     }
-    console.log("Create a product");
+    console.warn("Create a product");
     resetFields();
 
   }
@@ -75,12 +98,13 @@ const validateInput = () => {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen options={{title: isUpdating ? 'Update Product'  : 'Create Product'}}/>
       <Image source={{uri:  selectedImage || defaultImage }} style={styles.image}/>
       <Text style={styles.textBtn} onPress={pickImage}>Select Image</Text>
       <InputWithLabel label='create' placeholder='Name' value={name} onChangeText={setName} /> 
       <InputWithLabel label='create' placeholder='9.99'  keyboardType='numeric' value={price} onChangeText={setPrice}  /> 
       <Text style={styles.error}>{errors}</Text>
-      <Button onPress={OnCreate} text='Create' />
+      <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
 
     </View>
   )
