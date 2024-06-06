@@ -1,13 +1,14 @@
-import { View, Platform, FlatList, Button, TouchableOpacity, Text } from 'react-native'
+import { View, Platform, FlatList,  Text, StyleSheet } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { useCart } from '../providers/CartProvider';
 import CartListItem from '../components/CartListItem';
 import { useNavigation } from '@react-navigation/native';
+import Button from '../components/Button';
 
 
 
 const CartScreen = () => {
-    const {items} = useCart(); 
+    const {items, total} = useCart(); 
     const navigation = useNavigation()
 
 
@@ -18,12 +19,25 @@ const CartScreen = () => {
   
 
   return (
-    <View>
+    <View style={styles.layout}>
       <FlatList data={items}  renderItem={({item}) => <CartListItem cartItem={item}/> }/>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-      <Button title="Close Cart" onPress={handleOnClose} />
+      <Text style={styles.textTotal}>Total: ${total}</Text>
+      <Button text='Checkout' onPress={handleOnClose} />
     </View>
   )
 }
+
+const styles = StyleSheet.create( {
+  layout: {
+    padding: 10,
+  },
+  textTotal: {
+   marginTop: 16,
+   fontSize: 20,
+   fontWeight:'500',
+  
+  }
+}); 
 
 export default CartScreen
