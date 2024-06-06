@@ -7,20 +7,25 @@ type InputWithLabelProps = {
     labelStyle?: StyleProp<TextStyle>;
     inputStyle?: StyleProp<TextStyle>;
     label: string;
-
+    value?: string | undefined ;
+    onChangeText?: ((text: string) => void) | undefined
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({placeholder,
     keyboardType,
     label,
     labelStyle,
-    inputStyle
+    inputStyle,
+    value,
+    onChangeText,
      }) => {
   return (
     <View>
      <Text style={[styles.label, labelStyle]}>{label}</Text>
       <TextInput placeholder={placeholder} style={[styles.input, inputStyle]}
         keyboardType={keyboardType}
+        value={value}
+        onChangeText={onChangeText}
       />
     </View>
   )
