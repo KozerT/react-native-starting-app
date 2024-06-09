@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import InputWithLabel from '@/src/components/InputWithLabel'
 import Button from '@/src/components/Button'
@@ -72,7 +72,6 @@ const onSubmit = () => {
   } else {
     OnCreate();
   }
-
 }
 
 const OnUpdate = () => {
@@ -81,7 +80,6 @@ const OnUpdate = () => {
   }
   console.warn("Update the product");
   resetFields();
-
 }
 
 
@@ -92,9 +90,25 @@ const OnUpdate = () => {
     }
     console.warn("Create a product");
     resetFields();
+  }
+
+  const onDelete = () => {
+    console.warn('Delete')
 
   }
 
+  const confirmDelete = () => {
+ Alert.alert('Confirm', 'Are you sure you wanna delete this product?', [
+  {
+    text: 'Cancel',
+  },
+  {
+    text:'Delete',
+    style: 'destructive',
+    onPress: onDelete,
+  }
+ ])
+  }
 
   return (
     <View style={styles.container}>
@@ -105,6 +119,7 @@ const OnUpdate = () => {
       <InputWithLabel label='create' placeholder='9.99'  keyboardType='numeric' value={price} onChangeText={setPrice}  /> 
       <Text style={styles.error}>{errors}</Text>
       <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
+      {isUpdating && <Text onPress={confirmDelete} style={styles.textBtn}>Delete</Text>}
 
     </View>
   )
