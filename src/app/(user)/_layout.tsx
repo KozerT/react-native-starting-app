@@ -8,7 +8,6 @@ import { useColorScheme } from "@/src/components/useColorScheme";
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
 import { useAuth } from "@/src/providers/AuthProvider";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
