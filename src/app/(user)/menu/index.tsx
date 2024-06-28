@@ -4,6 +4,7 @@ import Colors from "@/src/constants/Colors";
 import ProductListItem from "@/src/components/ProductListItem";
 import { Text } from "react-native-elements";
 import { useProductList } from "@/src/api/products";
+import { Product } from "../../types";
 
 export default function MenuScreen() {
   const { data: products, error, isLoading } = useProductList();
