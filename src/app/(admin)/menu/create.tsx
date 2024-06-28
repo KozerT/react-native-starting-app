@@ -8,6 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
+  useDeleteProduct,
   useInsertProduct,
   useProduct,
   useUpdateProduct,
@@ -32,6 +33,7 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
   const { mutate: insertProduct } = useInsertProduct();
   const { mutate: updateProduct } = useUpdateProduct();
   const { data: updatingProduct, isLoading } = useProduct(id);
+  const { mutate: deleteProduct } = useDeleteProduct();
 
   const router = useRouter();
 
@@ -131,7 +133,12 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
   };
 
   const onDelete = () => {
-    console.warn("Delete");
+    deleteProduct(id, {
+      onSuccess: () => {
+        resetFields();
+        router.replace("/(admin)");
+      },
+    });
   };
 
   const confirmDelete = () => {
