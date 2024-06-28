@@ -55,3 +55,28 @@ export const useInsertProduct = () => {
     },
   });
 };
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn({ id, ...update }: Product) {
+      const { error } = await supabase
+        .from("products")
+        .update(update)
+        .eq("id", id)
+        .select();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
+    async onSuccess(_, { id }) {
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      await queryClient.invalidateQueries({ queryKey: ["product", id] });
+    },
+    onError(error) {
+      console.log(error);
+    },
+  });
+};

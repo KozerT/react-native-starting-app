@@ -2,7 +2,7 @@
   "name": "testapp",
   "main": "expo-router/entry",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -45,7 +45,8 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
-    "rimraf": "^5.0.7"
+    "rimraf": "^5.0.7",
+    "expo-modules-core": "~1.12.15"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
