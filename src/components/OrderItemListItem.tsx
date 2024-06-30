@@ -3,9 +3,10 @@ import React from "react";
 import { OrderItem } from "../app/types";
 import Colors from "../constants/Colors";
 import { defaultImage } from "./ProductListItem";
+import { Tables } from "../database.types";
 
 type OrderItemListItemProps = {
-  item: OrderItem;
+  item: { products: Tables<"products"> | null } & Tables<"order_items">;
 };
 
 const OrderItemListItem: React.FC<OrderItemListItemProps> = ({
@@ -14,14 +15,14 @@ const OrderItemListItem: React.FC<OrderItemListItemProps> = ({
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: item.products.image || defaultImage }}
+        source={{ uri: item.products?.image || defaultImage }}
         style={styles.image}
         resizeMode="contain"
       />
       <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{item.products.name}</Text>
+        <Text style={styles.title}>{item.products?.name}</Text>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.price}>${item.products.price.toFixed(2)}</Text>
+          <Text style={styles.price}>${item.products?.price.toFixed(2)}</Text>
           <Text>Size: {item.size}</Text>
         </View>
       </View>

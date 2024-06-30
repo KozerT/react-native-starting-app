@@ -1,4 +1,4 @@
-import { Order, OrderItem, InsertTables } from "@/src/app/types";
+import { InsertTables, Order, UpdateTables } from "@/src/app/types";
 import { supabase } from "@/src/lib/supabase";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,7 +12,9 @@ export const useAdminOrderList = ({ archived = false }) => {
       const { data, error } = await supabase
         .from("orders")
         .select("*")
-        .in("status", statuses);
+        .in("status", statuses)
+        .order("created_at", { ascending: false });
+
       if (error) {
         throw new Error(error.message);
       }
@@ -32,7 +34,8 @@ export const useMyOrderList = () => {
       const { data, error } = await supabase
         .from("orders")
         .select("*")
-        .eq("created_at", id);
+        .eq("created_at", id)
+        .order("created_at", { ascending: false });
       if (error) {
         throw new Error(error.message);
       }
@@ -77,7 +80,33 @@ export const useInsertOrder = () => {
       return NewProduct;
     },
     async onSuccess(data) {
-      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      await queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError(error) {
+      console.log(error);
+    },
+  });
+};
+
+export const useUpdateOrder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn({ id, status }: Pick<Order, "id" | "status">) {
+      const { data, error } = await supabase
+        .from("orders")
+        .update({ status })
+        .eq("id", id)
+        .select();
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+    async onSuccess(_, { id }) {
+      await queryClient.invalidateQueries({ queryKey: ["orders"] });
+      await queryClient.invalidateQueries({ queryKey: ["orders", id] });
     },
     onError(error) {
       console.log(error);

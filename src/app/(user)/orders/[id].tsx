@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import React from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
-import orders from "@/assets/data/orders";
 import OrderListItem from "@/src/components/OrderListItem";
 
 import OrderItemListItem from "@/src/components/OrderItemListItem";
@@ -23,7 +22,7 @@ const OrderDetailsScreen = () => {
     return <ActivityIndicator />;
   }
 
-  if (error) {
+  if (error || !order) {
     return <Text>Failed to fetch data</Text>;
   }
 

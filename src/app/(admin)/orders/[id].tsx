@@ -12,14 +12,19 @@ import OrderListItem from "@/src/components/OrderListItem";
 
 import OrderItemListItem from "@/src/components/OrderItemListItem";
 import Colors from "@/src/constants/Colors";
-import { OrderStatusList } from "../../types";
-import { useOrderDetails } from "@/src/api/orders";
+import { OrderStatus, OrderStatusList } from "../../types";
+import { useOrderDetails, useUpdateOrder } from "@/src/api/orders";
 
 const OrderDetailsScreen = () => {
   const { id: idString } = useLocalSearchParams();
   const id = parseFloat(typeof idString === "string" ? idString : idString![0]);
 
   const { data: order, isLoading, error } = useOrderDetails(id);
+  const { mutate: updateOrder } = useUpdateOrder();
+
+  const updateStatus = async (status: OrderStatus) => {
+    updateOrder({ id, status: status });
+  };
 
   if (isLoading) {
     return <ActivityIndicator />;
@@ -33,10 +38,12 @@ const OrderDetailsScreen = () => {
     <View style={styles.container}>
       <Stack.Screen options={{ title: `Order: #${id}` }} />
       <FlatList
-        data={order.order_items}
+        data={order?.order_items}
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
-        ListHeaderComponent={() => <OrderListItem order={order} />}
+        ListHeaderComponent={() =>
+          order ? <OrderListItem order={order} /> : null
+        }
         ListFooterComponent={() => (
           <>
             <Text style={{ fontWeight: "bold" }}>Status</Text>
@@ -44,7 +51,7 @@ const OrderDetailsScreen = () => {
               {OrderStatusList.map((status) => (
                 <Pressable
                   key={status}
-                  onPress={() => console.warn("Update status")}
+                  onPress={() => updateStatus(status)}
                   style={{
                     borderColor: Colors.light.tint,
                     borderWidth: 1,
@@ -52,7 +59,7 @@ const OrderDetailsScreen = () => {
                     borderRadius: 5,
                     marginVertical: 10,
                     backgroundColor:
-                      order.status === status
+                      order?.status === status
                         ? Colors.light.tint
                         : "transparent",
                   }}
@@ -60,7 +67,7 @@ const OrderDetailsScreen = () => {
                   <Text
                     style={{
                       color:
-                        order.status === status ? "white" : Colors.light.tint,
+                        order?.status === status ? "white" : Colors.light.tint,
                     }}
                   >
                     {status}
