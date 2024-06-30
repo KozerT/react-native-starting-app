@@ -1,13 +1,23 @@
- import { View } from '@/src/components/Themed';
-import { FlatList, StyleSheet } from 'react-native';
-import Colors from '@/src/constants/Colors';
-
-import orders from '@/assets/data/orders';
-import OrderListItem from '@/src/components/OrderListItem';
-
-
+import { View } from "@/src/components/Themed";
+import { ActivityIndicator, FlatList, StyleSheet, Text } from "react-native";
+import Colors from "@/src/constants/Colors";
+import OrderListItem from "@/src/components/OrderListItem";
+import { useAdminOrderList } from "@/src/api/orders";
 
 export default function OrdersScreen() {
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = useAdminOrderList({ archived: true });
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Failed to fetch</Text>;
+  }
   return (
     <FlatList
       data={orders}
@@ -21,5 +31,4 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.light.background,
   },
- 
 });
