@@ -1,40 +1,51 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Stack, useLocalSearchParams } from 'expo-router'
-import orders from '@/assets/data/orders';
-import OrderListItem from '@/src/components/OrderListItem';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React from "react";
+import { Stack, useLocalSearchParams } from "expo-router";
+import orders from "@/assets/data/orders";
+import OrderListItem from "@/src/components/OrderListItem";
 
-import OrderItemListItem from '@/src/components/OrderItemListItem';
+import OrderItemListItem from "@/src/components/OrderItemListItem";
+import { useOrderDetails } from "@/src/api/orders";
 
 const OrderDetailsScreen = () => {
-  const {id} = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === "string" ? idString : idString![0]);
 
-  const order = orders.find((item)=>item.id.toString() === id);
+  const { data: order, isLoading, error } = useOrderDetails(id);
 
-  if(!order){
-    return <Text>Not found</Text>
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Failed to fetch data</Text>;
   }
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{title: `Order: #${id}`}}/>
-   <FlatList data={order.order_items}
-    renderItem={({item})=> <OrderItemListItem item={item}/>}
-    contentContainerStyle={{gap:10}}
-    ListHeaderComponent={()=> <OrderListItem order={order}/>}  // If we need to scroll everything with the Header!
-    // ListFooterComponent={()=> <OrderListItem order={order}/>} // alternatively footer component also could be added!
-    />
+      <Stack.Screen options={{ title: `Order: #${id}` }} />
+      <FlatList
+        data={order.order_items}
+        renderItem={({ item }) => <OrderItemListItem item={item} />}
+        contentContainerStyle={{ gap: 10 }}
+        ListHeaderComponent={() => <OrderListItem order={order} />}
+      />
     </View>
-  )
-}
+  );
+};
 
-export default OrderDetailsScreen
+export default OrderDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {
     padding: 10,
     flex: 1,
     gap: 10,
-
-  }
-})
+  },
+});

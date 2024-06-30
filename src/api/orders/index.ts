@@ -1,3 +1,4 @@
+import { Order } from "@/src/app/types";
 import { supabase } from "@/src/lib/supabase";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,6 +33,23 @@ export const useMyOrderList = () => {
         .from("orders")
         .select("*")
         .eq("created_at", id);
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data;
+    },
+  });
+};
+
+export const useOrderDetails = (id: number) => {
+  return useQuery({
+    queryKey: ["orders", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*, order_items(*, products(*))")
+        .eq("id", id)
+        .single();
       if (error) {
         throw new Error(error.message);
       }
