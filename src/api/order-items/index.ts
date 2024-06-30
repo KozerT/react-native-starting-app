@@ -8,12 +8,11 @@ export const useInsertOrderItems = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    async mutationFn(data: InsertTables<"order_items">) {
+    async mutationFn(items: InsertTables<"order_items">[]) {
       const { error, data: NewProduct } = await supabase
         .from("order_items")
-        .insert({ ...data })
-        .select()
-        .single();
+        .insert(items)
+        .select();
 
       if (error) {
         throw new Error(error.message);
