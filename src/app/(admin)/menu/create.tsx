@@ -14,6 +14,11 @@ import {
   useUpdateProduct,
 } from "@/src/api/products";
 
+import * as FileSystem from "expo-file-system";
+import { randomUUID } from "expo-crypto";
+import { supabase } from "@/src/lib/supabase";
+import { decode } from "base64-arraybuffer";
+
 type CreateProductScreenProps = {
   OnCreate: () => void;
   products: Product[];
@@ -24,15 +29,14 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
   const [image, setImage] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { id: idString } = useLocalSearchParams();
-  const id = parseFloat(typeof idString === "string" ? idString : idString![0]);
-  const isUpdating = !!idString;
+  const id = idString ? parseFloat(idString as string) : null;
+  const isUpdating = !!id;
 
   const { mutate: insertProduct } = useInsertProduct();
   const { mutate: updateProduct } = useUpdateProduct();
-  const { data: updatingProduct, isLoading } = useProduct(id);
+  const { data: updatingProduct, isLoading } = useProduct(id as number);
   const { mutate: deleteProduct } = useDeleteProduct();
 
   const router = useRouter();
@@ -47,14 +51,14 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      setImage(result.assets[0].uri);
     } else {
       alert("You did not select any image.");
     }
@@ -64,6 +68,7 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
   const resetFields = () => {
     setName("");
     setPrice("");
+    setImage(null);
   };
 
   //TODO: find and improve with the validation library;
@@ -88,20 +93,20 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
 
   const onSubmit = () => {
     if (isUpdating) {
-      OnUpdate();
+      onUpdate();
     } else {
-      OnCreate();
+      onCreate();
     }
   };
 
-  const OnUpdate = () => {
+  const onUpdate = () => {
     if (!validateInput()) {
-      return false;
+      return;
     }
 
     updateProduct(
       {
-        id,
+        id: id as number,
         name,
         price: parseFloat(price),
         image,
@@ -111,32 +116,46 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
           resetFields();
           router.back();
         },
+        onError: (error) => {
+          console.error("Error updating product: ", error);
+        },
       }
     );
   };
 
-  const OnCreate = async () => {
+  const onCreate = async () => {
     if (!validateInput()) {
-      return false;
+      return;
     }
-    insertProduct(
-      { name, price: parseFloat(price), image },
-      {
+
+    try {
+      const imagePath = await uploadImage();
+
+      const newProduct: Omit<Product, "id"> = {
+        name,
+        price: parseFloat(price),
+        image: imagePath || image,
+      };
+
+      insertProduct(newProduct, {
         onSuccess: () => {
           resetFields();
           router.back();
         },
-      }
-    );
-
-    resetFields();
+      });
+    } catch (error) {
+      console.error("Error creating product: ", error);
+    }
   };
 
   const onDelete = () => {
-    deleteProduct(id, {
+    deleteProduct(id as number, {
       onSuccess: () => {
         resetFields();
-        router.replace("/(admin)");
+        router.replace("/(admin)/menu");
+      },
+      onError: (error) => {
+        console.error("Error deleting product: ", error);
       },
     });
   };
@@ -154,15 +173,37 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
     ]);
   };
 
+  const uploadImage = async () => {
+    if (!image?.startsWith("file://")) {
+      return;
+    }
+
+    try {
+      const base64 = await FileSystem.readAsStringAsync(image, {
+        encoding: "base64",
+      });
+      const filePath = `${randomUUID()}.png`;
+      const contentType = "image/png";
+      const { data, error } = await supabase.storage
+        .from("product-images")
+        .upload(filePath, decode(base64), { contentType });
+
+      if (error) {
+        console.error("Upload error: ", error.message);
+        return;
+      }
+      return data.path;
+    } catch (error) {
+      console.error("Unexpected error: ", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen
         options={{ title: isUpdating ? "Update Product" : "Create Product" }}
       />
-      <Image
-        source={{ uri: selectedImage || defaultImage }}
-        style={styles.image}
-      />
+      <Image source={{ uri: image || defaultImage }} style={styles.image} />
       <Text style={styles.textBtn} onPress={pickImage}>
         Select Image
       </Text>

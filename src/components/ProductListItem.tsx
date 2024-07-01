@@ -3,6 +3,7 @@ import { Text, View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
 import { Link, useSegments } from "expo-router";
 import { Tables } from "../database.types";
+import RemoteImage from "./RemoteImage";
 
 export const defaultImage =
   "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/extravaganzza.png";
@@ -16,10 +17,11 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product }) => {
   return (
     <Link href={`/${segments[0]}/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
-        <Image
-          source={{ uri: product.image || defaultImage }}
+        <RemoteImage
+          path={product.image}
           style={styles.image}
           resizeMode="contain"
+          fallback={defaultImage}
         />
         <Text style={styles.title}>{product.name}</Text>
         <Text>${product.price}</Text>

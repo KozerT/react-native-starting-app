@@ -29,12 +29,13 @@ export const useMyOrderList = () => {
 
   return useQuery({
     queryKey: ["orders", { userId: id }],
+
     queryFn: async () => {
       if (!id) return null;
       const { data, error } = await supabase
         .from("orders")
         .select("*")
-        .eq("created_at", id)
+        .eq("user_id", id)
         .order("created_at", { ascending: false });
       if (error) {
         throw new Error(error.message);
