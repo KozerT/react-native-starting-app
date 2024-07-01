@@ -91,25 +91,26 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
     return true;
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (isUpdating) {
-      onUpdate();
+      await onUpdate();
     } else {
-      onCreate();
+      await onCreate();
     }
   };
 
-  const onUpdate = () => {
+  const onUpdate = async () => {
     if (!validateInput()) {
       return;
     }
 
+    const imagePath = await uploadImage();
     updateProduct(
       {
         id: id as number,
         name,
         price: parseFloat(price),
-        image,
+        image: imagePath || image,
       },
       {
         onSuccess: () => {
@@ -152,7 +153,7 @@ const CreateProductScreen: React.FC<CreateProductScreenProps> = () => {
     deleteProduct(id as number, {
       onSuccess: () => {
         resetFields();
-        router.replace("/(admin)/menu");
+        router.replace("/(admin)/menu/");
       },
       onError: (error) => {
         console.error("Error deleting product: ", error);

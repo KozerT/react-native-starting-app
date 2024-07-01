@@ -4,6 +4,7 @@ import { OrderItem } from "../app/types";
 import Colors from "../constants/Colors";
 import { defaultImage } from "./ProductListItem";
 import { Tables } from "../database.types";
+import RemoteImage from "./RemoteImage";
 
 type OrderItemListItemProps = {
   item: { products: Tables<"products"> | null } & Tables<"order_items">;
@@ -14,8 +15,9 @@ const OrderItemListItem: React.FC<OrderItemListItemProps> = ({
 }: OrderItemListItemProps) => {
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: item.products?.image || defaultImage }}
+      <RemoteImage
+        path={item.products?.image}
+        fallback={defaultImage}
         style={styles.image}
         resizeMode="contain"
       />

@@ -1,9 +1,10 @@
 import { Image } from "react-native";
 import React, { ComponentProps, useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { transform } from "@babel/core";
 
 type RemoteImageProps = {
-  path: string | null;
+  path: string | null | undefined;
   fallback?: string;
 } & Omit<ComponentProps<typeof Image>, "source">;
 
@@ -25,8 +26,11 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
       }
 
       if (data) {
-        const url = URL.createObjectURL(data);
-        setImage(url);
+        const fr = new FileReader();
+        fr.readAsDataURL(data);
+        fr.onload = () => {
+          setImage(fr.result as string);
+        };
       }
     })();
   }, [path, fallback]);
