@@ -19,6 +19,7 @@
     "@react-navigation/material-top-tabs": "^6.6.13",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
+    "@stripe/stripe-react-native": "^0.38.1",
     "@supabase/supabase-js": "^2.43.5",
     "@tanstack/react-query": "^5.45.1",
     "base64-arraybuffer": "^1.0.2",
@@ -49,7 +50,8 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
-    "rimraf": "^5.0.7"
+    "rimraf": "^5.0.7",
+    "stripe": "^16.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
