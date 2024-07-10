@@ -6,6 +6,7 @@
 import "https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts"
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@16.1.0?target=deno&deno-std=0.132.0&no-check';
+import { createOrRetrieveProfile } from '../_utils/supabase.ts';
 
 
 const stripe = Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
@@ -15,14 +16,17 @@ const stripe = Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
 
 console.log("Hello from Functions!")
 
-serve(async (req) => {
+serve(async (req: Request) => {
   try {
     const { amount } = await req.json();
+
+    const customer = await createOrRetrieveProfile(req);
 
     // Create a PaymentIntent so that the SDK can charge the logged in customer.
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: 'usd',
+      customer: 'customer',
     });
     
     const res = {
