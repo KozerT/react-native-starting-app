@@ -7,6 +7,7 @@ import "https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts"
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@16.1.0?target=deno&deno-std=0.132.0&no-check';
 import { createOrRetrieveProfile } from '../_utils/supabase.ts';
+import { stripe } from '../_utils/stripe.ts';
 
 
 const stripe = Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
@@ -22,16 +23,23 @@ serve(async (req: Request) => {
 
     const customer = await createOrRetrieveProfile(req);
 
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer },
+      { apiVersion: "2020-08-27" }
+    );
+    
+
     // Create a PaymentIntent so that the SDK can charge the logged in customer.
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: 'usd',
-      customer: 'customer',
     });
     
     const res = {
       publishableKey: Deno.env.get('EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY'),
       paymentIntent: paymentIntent.client_secret,
+      ephemeralKey: ephemeralKey.secret,
+      customer: customer,
     };
     return new Response(JSON.stringify(res), {
       headers: { 'Content-Type': 'application/json' },
