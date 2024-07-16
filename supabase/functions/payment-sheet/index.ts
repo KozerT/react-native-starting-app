@@ -33,6 +33,7 @@ serve(async (req: Request) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: 'usd',
+      customer: customer,
     });
     
     const res = {
