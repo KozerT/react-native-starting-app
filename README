@@ -11,6 +11,16 @@
 
 5. To redeploy the function, so it's deployed to the production supabase instance: npx supabase functions deploy payment-sheet
 
+- Expo Application Services (EAS) ( help ti build for the ios, even when using windows. Very handy for the CI/CD pipelines) [https://docs.expo.dev/eas/]
+
+TODO: push notification 1.Expo notification library (locally); 2.Remote push notification (from different device, different user, different event), going through 2 service providers - Firebase Cloud Messaging (FCM) and other Apple Push Notification Service (APNs) [https://docs.expo.dev/push-notifications/overview/], so to simplify this routing , expo provides with the Push notifications setup [https://docs.expo.dev/push-notifications/push-notifications-setup/]
+
+setUp for the notifications is in lib/notifications.ts (instead of APp.tsx ) & NotificationProvider.tsx ( instead of APp.tsx)
+
+6. To add changes to the cloud db , after applying locally : npx supabase db diff -f "add_push_token (file name) "
+
+7. To push changes to the remote one: npx supabase db push
+
 TODO:
 
-- Expo Application Services (EAS) ( help ti build for the ios, even when using windows. Very handy for the CI/CD piplines)
+Get Credential for the development builds (FCM and NPM tokens, set up firebase cloud messaging)
