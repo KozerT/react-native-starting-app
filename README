@@ -1,14 +1,16 @@
 #To run a project with teh functionality -
 
-1. Run a docker:  npx supabase status
+1. Run a docker desktop , then
+   npx supabase status
 
- 2. redirect to Studio URL : {url}
+2. redirect to Studio URL : {url}
 
 3. npx start
 
+4. Run the function locally: npx supabase functions serve --env-file .env payment-sheet
 
-4. Run the function locally:  npx supabase functions serve --env-file .env payment-sheet
+5. To redeploy the function, so it's deployed to the production supabase instance: npx supabase functions deploy payment-sheet
 
 TODO:
 
-fix the : Link Stripe Customers ; 
+- Expo Application Services (EAS) ( help ti build for the ios, even when using windows. Very handy for the CI/CD piplines)

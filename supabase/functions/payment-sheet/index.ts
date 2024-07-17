@@ -17,23 +17,25 @@ const stripe = Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
 
 console.log("Hello from Functions!")
 
+
 serve(async (req: Request) => {
   try {
     const { amount } = await req.json();
 
     const customer = await createOrRetrieveProfile(req);
 
+//For fetching custoner stored payment methods
     const ephemeralKey = await stripe.ephemeralKeys.create(
       { customer: customer },
       { apiVersion: "2020-08-27" }
     );
     
 
-    // Create a PaymentIntent so that the SDK can charge the logged in customer.
+// Create a PaymentIntent so that the SDK can charge the logged in customer.
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: 'usd',
-      customer: customer,
+      customer: customer, //this will link specific link to the customer 
     });
     
     const res = {

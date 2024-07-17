@@ -19,15 +19,22 @@ export const initializePaymentSheet = async (amount: number) => {
 
     if(!paymentIntent || !publishableKey) return;
 
-    const result = await initPaymentSheet({
+    const { error } = await initPaymentSheet({
         merchantDisplayName: "tet-ko.test",
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
         paymentIntentClientSecret: paymentIntent,
+        returnURL: 'yourapp://stripe-redirect',
         defaultBillingDetails: {
             name: 'Joe Doe',
         },
     })
+    if (error) {
+        console.error('Error initializing payment sheet:', error);
+        return false;
+      }
+    
+      return true;
 }
 
 export const openPaymentSheet  =  async() => {

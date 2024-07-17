@@ -27,11 +27,14 @@ export const createOrRetrieveProfile = async (req: Request) => {
 
  console.log(profile)
 
+
+ // If the customer already exist
  if(profile.stripe_customer_id){
     return profile.stripe_customer_id;
  }
 
 
+ //Create a stripe customer
  const customer = await stripe.customers.create({
     email: user.email,
     metadata: {
@@ -39,6 +42,7 @@ export const createOrRetrieveProfile = async (req: Request) => {
     }
  })
 
+ //Save customer to our database 
  await supabaseClient.from('profiles').update({stripe_customer_id: customer.id }).eq('id', profile.id)
 
  return customer.id;
