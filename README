@@ -1,0 +1,14 @@
+#To run a project with teh functionality -
+
+1. Run a docker:  npx supabase status
+
+ 2. redirect to Studio URL : {url}
+
+3. npx start
+
+
+4. Run the function locally:  npx supabase functions serve --env-file .env payment-sheet
+
+TODO:
+
+fix the : Link Stripe Customers ; 
